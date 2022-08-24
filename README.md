@@ -4,42 +4,25 @@ This repository cointains config example for provisioning services and golden co
 * 5170 probably
 * 5164s
 
-## Requirements
+## Configs are saved in the [goldens](goldens/) directory
 
-* Ansible
-
-### Copy config files to/from devices
+### Copy config files FROM device
 
 ```bash
 # Download running config
 scp diag@10.92.44.150:/mnt/config/ciena-cfg.xml 5144-1.xml
-# Push config file
-scp 5144-1.xml diag@10.92.44.150:/home/diag/foo.xml
 ```
 
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<config
-  xmlns:ncx="http://netconfcentral.org/ns/yuma-ncx"
-  ncx:last-modified="2022-08-24T17:10:10Z" ncx:etag="8"
-  xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
-  <cfm-global-config xmlns="urn:ciena:params:xml:ns:yang:ciena-pn:ciena-cfm">
-    <admin-state>disable</admin-state>
-  </cfm-global-config>
-  <classifiers xmlns="urn:ciena:params:xml:ns:yang:ciena-pn::ciena-mef-classifier">
-    <classifier>
-      <name>Untagged</name>
-      <filter-entry>
-        <filter-parameter
-          xmlns:classifier="urn:ciena:params:xml:ns:yang:ciena-pn::ciena-mef-classifier">classifier:vtag-stack</filter-parameter>
-        <untagged-exclude-priority-tagged>true</untagged-exclude-priority-tagged>
-      </filter-entry>
-    </classifier>
-  </classifiers>
-  <components xmlns="http://openconfig.net/yang/platform">
-    <component>
-```
+### Copy config files TO device
 
-```bash
-ansible provision.xml
-```
+1. Push file
+  ```bash
+  scp 5144-1.xml diag@10.92.44.150:/home/diag/foo.xml
+  ```
+2. login to device
+  ```bash
+  diag shell
+  sudo cp /home/diag/foo.xml /mnt/config/.yumapro/backups/foo.xml
+  exit
+  conf reset user-config filename foo.xml
+  ```
